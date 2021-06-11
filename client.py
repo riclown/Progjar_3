@@ -47,6 +47,8 @@ Thread(target=recv_msg, args=(server,)).start()
 while True:
     # antrian baru
     sockets_list = [server]
+    #mengirim nama user chat ke server
+    server.send(user_chat.encode())
     
     # ambil dari antrian
     read_socket, write_socket, error_socket = select.select(sockets_list, [], [])
