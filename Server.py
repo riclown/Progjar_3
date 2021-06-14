@@ -21,8 +21,11 @@ def broadcast(message, connection):
                 clients.close()
                 remove(clients)
 
+def send_msg(client_socket, message):
+    client_socket.send(bytes(message, "utf-8"))
+
 # terima chat client dan kirim
-def recv_msg(conn, addr):
+def recv_msg(clients, conn, addr):
     while True:
         try:
             command = conn.recv(2048).decode()
@@ -46,7 +49,8 @@ def recv_msg(conn, addr):
                     data = ' '.join(data.split(' ')[:-1])
                     print('<' + username + '> ' + data)
                     message_to_send = '<' + username + '> ' + data
-
+                    destination_socket = clients[targetuser][0]
+                    send_msg(destination_socket, message_to_send)
             else:
                 remove(conn)
         except:
@@ -56,6 +60,8 @@ def recv_msg(conn, addr):
 def remove(connection):
     if connection in list_of_clients:
         list_of_clients.remove(connection)
+
+clients = {}
 
 while True:
     conn, addr = server.accept()
@@ -70,6 +76,9 @@ while True:
     print(list_of_clients[size-1])
     print('   '+ userchat +' connected\n')
     #karena multi client kita menggunakan fungsi thread
-    threading.Thread(target=recv_msg, args=(conn, addr)).start()
+    server_thread = threading.Thread(target=recv_msg, args=(clients, conn, addr))
+    server_thread.start()
+
+    clients["{}".format(userchat)] = (conn, addr, server_thread)
 
 conn.close()
