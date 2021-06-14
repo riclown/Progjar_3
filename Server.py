@@ -1,6 +1,4 @@
 import socket
-import select
-import sys
 import threading
 
 # Membuat socket
@@ -14,7 +12,7 @@ list_of_clients = []
 list_of_user = []
 
 # kirim pesan ke client yang lain
-def kirimpesan(message, connection):
+def broadcast(message, connection):
     for clients in list_of_clients:
         if clients != connection:
             try:
@@ -24,12 +22,12 @@ def kirimpesan(message, connection):
                 remove(clients)
 
 # terima chat client dan kirim
-def clientthread(conn, addr):
+def recv_msg(conn, addr):
     while True:
         try:
             data = conn.recv(2048).decode()
             
-            # ambil data client lalu kirim ke lient lain
+            # ambil data client lalu kirim ke client lain
             if data:
                 username = data.split(" ")[-1].rstrip('\n')
                 print(list_of_user)
@@ -37,7 +35,7 @@ def clientthread(conn, addr):
                 print('<' + username + '> ' + data)
                 message_to_send = '<' + username + '> ' + data
                 #ketika kita mau kirim pesan ke client lainnya
-                kirimpesan(message_to_send, conn)
+                broadcast(message_to_send, conn)
             else:
                 remove(conn)
         except:
@@ -61,6 +59,6 @@ while True:
     print(list_of_clients[size-1])
     print('   '+ userchat +' connected\n')
     #karena multi client kita menggunakan fungsi thread
-    threading.Thread(target=clientthread, args=(conn, addr)).start()
+    threading.Thread(target=recv_msg, args=(conn, addr)).start()
 
 conn.close()
