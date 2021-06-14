@@ -5,10 +5,20 @@ import threading
 BUFF_SIZE = 65535
 friends = []
 
-#meminta masukan dari pengguna
+## INSTRUCTION
+print("Welcome to chat service. First, input your username!")
+
+#  Meminta masukan dari pengguna
 ip_chat = '127.0.0.1'
 port_chat = 8082
 user_chat = input('Username for chat: ')
+
+## INSTRUCTION
+print("Next is adding command. Here are list of our available command.")
+print("-BROADCAST")
+print("-PRIVATE")
+print("-ADD")
+print("-FRIENDLIST")
 
 # terima dari server
 def recv_msg(socket):
@@ -18,7 +28,7 @@ def recv_msg(socket):
 
 def add_friend(client_username):
     friends.append(client_username)
-    print("SUCCESS! {} have been added as your friend.".format(client_username))
+    print("{} have been added as your friend.".format(client_username))
 
 def friend_list():
     print("Your FriendList:")
@@ -52,21 +62,25 @@ while True:
         continue
 
     elif command == "PRIVATE":
-        client_socket.send(command.encode())
         ## MINTA TARGET USER
         print("Whom you want to send message to :")
         target = input()
-        client_socket.send(target.encode())
-        ## MINTA MESSAGE
-        print("Send Message :")
-        message = input()
-        message = message + " " + user_chat
-        client_socket.send(message.encode())
-        ## PRINT MESSAGE
-        sys.stdout.write('<You> ')
-        message = ' '.join(message.split(' ')[:-1])
-        sys.stdout.write(message + '\n')
-        continue
+        if target not in friends and target != "":
+            print("{} is not recognized as your friend.".format(target))
+            continue
+        else :
+            client_socket.send(command.encode())
+            client_socket.send(target.encode())
+            ## MINTA MESSAGE
+            print("Send Message :")
+            message = input()
+            message = message + " " + user_chat
+            client_socket.send(message.encode())
+            ## PRINT MESSAGE
+            sys.stdout.write('<You> ')
+            message = ' '.join(message.split(' ')[:-1])
+            sys.stdout.write(message + '\n')
+            continue
 
     elif command == "ADD":
         print("What is your friend username :")
