@@ -36,6 +36,7 @@ def clientthread(conn, addr):
                 data = ' '.join(data.split(' ')[:-1])
                 print('<' + username + '> ' + data)
                 message_to_send = '<' + username + '> ' + data
+                #ketika kita mau kirim pesan ke client lainnya
                 kirimpesan(message_to_send, conn)
             else:
                 remove(conn)
@@ -59,6 +60,7 @@ while True:
         size+=1
     print(list_of_clients[size-1])
     print(' connected\n')
+    #karena multi client kita menggunakan fungsi thread
     threading.Thread(target=clientthread, args=(conn, addr)).start()
 
 conn.close()
