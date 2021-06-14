@@ -1,6 +1,7 @@
 import socket
 import sys
 import threading
+import os
 
 BUFF_SIZE = 65535
 friends = []
@@ -19,6 +20,9 @@ print("-BROADCAST")
 print("-PRIVATE")
 print("-ADD")
 print("-FRIENDLIST")
+
+def FileExists(filename):
+    return os.path.isfile(filename)
 
 # terima dari server
 def recv_msg(socket):
@@ -90,6 +94,23 @@ while True:
 
     elif command == "FRIENDLIST":
         friend_list()    
+        continue
+
+    elif command == "UPLOAD":
+        client_socket.send(command.encode("utf-8"))
+        filename = input("Insert Filename: ")
+        if FileExists(filename):
+            print ("File Exist")
+            print (filename) #ngetest
+            client_socket.send(filename.encode("utf-8"))
+            f = open(filename,"rb")
+            temp = f.read(1024)
+            while (temp):
+                client_socket.send(temp)
+                temp = f.read(1024)
+            f.close()
+        else :
+            print ("File doesnt Exist")
         continue
 
     else :
