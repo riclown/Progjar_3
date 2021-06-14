@@ -59,7 +59,7 @@ while True:
     for x in list_of_clients:
         size+=1
     print(list_of_clients[size-1])
-    print(' connected\n')
+    print('   '+ userchat +' connected\n')
     #karena multi client kita menggunakan fungsi thread
     threading.Thread(target=clientthread, args=(conn, addr)).start()
 
