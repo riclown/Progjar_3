@@ -39,17 +39,33 @@ while True:
     command = input()
 
     if command == "BROADCAST":
+        client_socket.send(command.encode())
+        ## MINTA MESSAGE
         print("Send Message :")
         message = input()
         message = message + " " + user_chat
         client_socket.send(message.encode())
+        ## PRINT MESSAGE
         sys.stdout.write('<You> ')
         message = ' '.join(message.split(' ')[:-1])
         sys.stdout.write(message + '\n')
         continue
 
     elif command == "PRIVATE":
-        print ("Masuk Private")
+        client_socket.send(command.encode())
+        ## MINTA TARGET USER
+        print("Whom you want to send message to :")
+        target = input()
+        client_socket.send(target.encode())
+        ## MINTA MESSAGE
+        print("Send Message :")
+        message = input()
+        message = message + " " + user_chat
+        client_socket.send(message.encode())
+        ## PRINT MESSAGE
+        sys.stdout.write('<You> ')
+        message = ' '.join(message.split(' ')[:-1])
+        sys.stdout.write(message + '\n')
         continue
 
     elif command == "ADD":

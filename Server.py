@@ -25,17 +25,28 @@ def broadcast(message, connection):
 def recv_msg(conn, addr):
     while True:
         try:
-            data = conn.recv(2048).decode()
+            command = conn.recv(2048).decode()
             
-            # ambil data client lalu kirim ke client lain
-            if data:
-                username = data.split(" ")[-1].rstrip('\n')
-                print(list_of_user)
-                data = ' '.join(data.split(' ')[:-1])
-                print('<' + username + '> ' + data)
-                message_to_send = '<' + username + '> ' + data
-                #ketika kita mau kirim pesan ke client lainnya
-                broadcast(message_to_send, conn)
+            # ambil command client lalu kirim ke client lain
+            if command:
+                if command == "BROADCAST":
+                    data = conn.recv(2048).decode()
+                    username = data.split(" ")[-1].rstrip('\n')
+                    print(list_of_user)
+                    data = ' '.join(data.split(' ')[:-1])
+                    print('<' + username + '> ' + data)
+                    message_to_send = '<' + username + '> ' + data
+                    #ketika kita mau kirim pesan ke client lainnya
+                    broadcast(message_to_send, conn)
+                if command == "PRIVATE":
+                    targetuser = conn.recv(2048).decode()
+                    data = conn.recv(2048).decode()
+                    username = data.split(" ")[-1].rstrip('\n')
+                    print(list_of_user)
+                    data = ' '.join(data.split(' ')[:-1])
+                    print('<' + username + '> ' + data)
+                    message_to_send = '<' + username + '> ' + data
+
             else:
                 remove(conn)
         except:
